@@ -58,6 +58,7 @@ public class LabelUtils {
         StringBuilder builder = new StringBuilder();
         builder.append(result.firstKey());
         /*
+        // This part is so important. If you want get all list that product could be, You have to use this part.
         int total = 0;
         for (Map.Entry<String, Float> entry : result.entrySet()) {
             if (total == 10 || entry.getValue() <= 0) {
