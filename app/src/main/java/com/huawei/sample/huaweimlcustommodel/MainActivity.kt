@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
                 Product(
                     id = 2,
                     title = "Men's Mountain Waterproof Ski Jacket Windproof Rain Jacket Winter Warm Snow Coat",
-                    image = "https://i.hizliresim.com/jTIWqd.jpg",
+                    image = "https://i.hizliresim.com/JVk2Qy.jpg",
                     price = 77.99,
                     category = ""
                 ),
