@@ -1,14 +1,14 @@
 /*
  * Copyright (c) Huawei Technologies Co., Ltd. 2020-2020. All rights reserved.
  */
-package com.huawei.sample.huaweimlcustommodel
+package com.huawei.sample.huaweimlcustommodel.huaweimlutils
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import com.huawei.hms.mlsdk.custom.MLModelDataType
 import com.huawei.hms.mlsdk.custom.MLModelOutputs
-import com.huawei.sample.huaweimlcustommodel.utils.LabelUtils.readLabels
+import com.huawei.sample.huaweimlcustommodel.huaweimlutils.LabelUtils.readLabels
 import java.util.*
 
 class ImageLableModel(private val mContext: Context) : ModelOperator() {

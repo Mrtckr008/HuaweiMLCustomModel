@@ -1,4 +1,4 @@
-package com.huawei.sample.huaweimlcustommodel
+package com.huawei.sample.huaweimlcustommodel.view
 
 
 import android.app.Activity
@@ -7,17 +7,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.huawei.sample.huaweimlcustommodel.huaweimlutils.InterpreterManager
+import com.huawei.sample.huaweimlcustommodel.huaweimlutils.ModelOperator
+import com.huawei.sample.huaweimlcustommodel.model.Product
+import com.huawei.sample.huaweimlcustommodel.R
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.product_list_item.view.*
 
 
 class ProductAdapter(private val context:Activity, private val productList: ArrayList<Product>) : RecyclerView.Adapter<ProductAdapter.FeedViewHolder>() {
     private var interpreterManager: InterpreterManager? = null
-    var modelType: ModelOperator.Model = ModelOperator.Model.LABEL
+    var modelType: ModelOperator.Model =
+        ModelOperator.Model.LABEL
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.product_list_item, parent, false)
-        interpreterManager = InterpreterManager(context, modelType)
-        return FeedViewHolder(view)
+        interpreterManager =
+            InterpreterManager(
+                context,
+                modelType
+            )
+        return FeedViewHolder(
+            view
+        )
     }
 
     override fun getItemCount(): Int {

@@ -1,4 +1,4 @@
-package com.huawei.sample.huaweimlcustommodel
+package com.huawei.sample.huaweimlcustommodel.huaweimlutils
 
 import android.content.Context
 import android.graphics.Bitmap

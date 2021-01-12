@@ -2,13 +2,12 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2020-2020. All rights reserved.
  */
 
-package com.huawei.sample.huaweimlcustommodel;
+package com.huawei.sample.huaweimlcustommodel.huaweimlutils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.huawei.hms.mlsdk.custom.MLModelOutputs;
-import com.huawei.sample.huaweimlcustommodel.utils.LabelUtils;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) Huawei Technologies Co., Ltd. 2020-2020. All rights reserved.
  */
-package com.huawei.sample.huaweimlcustommodel.utils
+package com.huawei.sample.huaweimlcustommodel.huaweimlutils
 
 import android.content.Context
 import android.util.Log
