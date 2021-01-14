@@ -9,6 +9,7 @@ import android.graphics.Color
 import com.huawei.hms.mlsdk.custom.MLModelDataType
 import com.huawei.hms.mlsdk.custom.MLModelOutputs
 import com.huawei.sample.huaweimlcustommodel.huaweimlutils.LabelUtils.readLabels
+import com.huawei.sample.huaweimlcustommodel.huaweimlutils.ModelOperator
 import java.util.*
 
 class ImageLableModel(private val mContext: Context) : ModelOperator() {
