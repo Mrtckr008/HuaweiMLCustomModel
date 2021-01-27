@@ -13,50 +13,38 @@ import java.lang.Exception
 import java.util.*
 
 object LabelUtils {
-    private const val TAG = "MainActivity"
-    fun readLabels(
-        context: Context,
-        assetFileName: String?
-    ): ArrayList<String> {
+    fun readLabels(context: Context, assetFileName: String?): ArrayList<String> {
         val result = ArrayList<String>()
         var inputStream: InputStream? = null
         try {
             inputStream = context.assets.open(assetFileName!!)
-            val br =
-                BufferedReader(InputStreamReader(inputStream, "UTF-8"))
+            val bufferedReader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
             try {
                 var readString = ""
-                while (br.readLine().also {
+                while (bufferedReader.readLine().also {
                     if (it != null) {
-                        readString = it
-                    }
-                    } != null) {
+                        readString = it }} != null) {
                     result.add(readString)
                 }
             }
             catch (e:Exception){}
-            br.close()
+            bufferedReader.close()
         } catch (error: IOException) {
-            Log.e(TAG, "Asset file doesn't exist: " + error.message)
+            Log.e("readLabels", "Asset file doesn't exist: " + error.message)
         } finally {
             if (inputStream != null) {
                 try {
                     inputStream.close()
                 } catch (error: IOException) {
-                    Log.e(TAG, "close failed: " + error.message)
+                    Log.e("readLabels", "close failed: " + error.message)
                 }
             }
         }
         return result
     }
 
-    @JvmStatic
-    fun processResult(
-        labelList: List<String>,
-        probabilities: FloatArray
-    ): String {
-        val localResult: MutableMap<String, Float> =
-            HashMap()
+    fun processResult(labelList: List<String>, probabilities: FloatArray): String {
+        val localResult: MutableMap<String, Float> = HashMap()
         val compare = ValueComparator(localResult)
         for (i in probabilities.indices) {
             localResult[labelList[i]] = probabilities[i]
@@ -76,7 +64,8 @@ object LabelUtils {
             builder.append(entry.getKey());
             total++;
         }
-         */return builder.toString()
+         */
+        return builder.toString()
     }
 
     private class ValueComparator internal constructor(var base: Map<String, Float>) :
@@ -88,6 +77,5 @@ object LabelUtils {
                 1
             }
         }
-
     }
 }

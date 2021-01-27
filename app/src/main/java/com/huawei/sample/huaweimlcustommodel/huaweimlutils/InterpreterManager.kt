@@ -6,43 +6,43 @@ import android.util.Log
 import com.huawei.hms.mlsdk.common.MLException
 import com.huawei.hms.mlsdk.custom.*
 import java.io.IOException
-import java.lang.ref.WeakReference
-import java.util.*
 import kotlin.collections.HashMap
 
 
-class InterpreterManager(context: Context, modelType: ModelOperator.Model) {
-    private val weakContext: WeakReference<Context>
-    private var modelExecutor: MLModelExecutor? = null
-    private val modelType: ModelOperator.Model
-    private var mModelOperator: ModelOperator? = null
-    private var mModelName: String? = null
-    private var mModelFullName // .om, .mslite, .ms
-            : String? = null
-
+class InterpreterManager(context: Context,modelType: ModelOperator.Model) {
+    private var mlModelExecutor: MLModelExecutor? = null
+    private var modelOperator: ModelOperator? = null
+    private var modelName: String? = null
+    private var modelFullName: String? = null // .om, .mslite, .ms
     private lateinit var callbackResult :(HashMap<Int,String>) -> Unit
-    private var hashmapData :HashMap<Int,String>?= hashMapOf()
+    private var hashMapData :HashMap<Int,String>?= hashMapOf()
 
-    fun asset(bitmap: Bitmap,position: Int,callback: (analyzeResult:HashMap<Int,String>) -> Unit) {
+    init {
+        modelOperator = ModelOperator.create(context, modelType)
+        modelName = modelOperator!!.modelName
+        modelFullName = modelOperator!!.modelFullName
+    }
+
+    fun createCustomModelFromAssetFile(bitmap: Bitmap, position: Int, callback: (analyzeResult:HashMap<Int,String>) -> Unit) {
         callbackResult=callback
-        val localModel = MLCustomLocalModel.Factory(mModelName).setAssetPathFile(mModelFullName).create()
+        val localModel = MLCustomLocalModel.Factory(modelName).setAssetPathFile(modelFullName).create()
         val settings = MLModelExecutorSettings.Factory(localModel).create()
         try {
-            modelExecutor = MLModelExecutor.getInstance(settings)
-            executorImpl(bitmap,position)
+            mlModelExecutor = MLModelExecutor.getInstance(settings)
+            createMLModelInputs(bitmap,position)
         } catch (error: MLException) {
             error.printStackTrace()
         }
     }
 
-    private fun executorImpl(bitmap: Bitmap,position: Int) {
-        val input: Any = mModelOperator!!.getInput(bitmap)
-        Log.d(TAG, "interpret pre process")
+    private fun createMLModelInputs(bitmap: Bitmap, position: Int) {
+        val input: Any? = modelOperator!!.getInput(bitmap)
+        Log.d("executorImpl", "interpret pre process")
         var inputs: MLModelInputs? = null
         try {
             inputs = MLModelInputs.Factory().add(input).create()
         } catch (e: MLException) {
-            Log.e(TAG, "add inputs failed! " + e.message)
+            Log.e("executorImpl", "add inputs failed! " + e.message)
         }
         var inOutSettings: MLModelInputOutputSettings? = null
         try {
@@ -50,65 +50,49 @@ class InterpreterManager(context: Context, modelType: ModelOperator.Model) {
                 MLModelInputOutputSettings.Factory()
             settingsFactory.setInputFormat(
                 0,
-                mModelOperator!!.inputType,
-                mModelOperator!!.inputShape
+                modelOperator!!.inputType(),
+                modelOperator!!.inputShape()
             )
-            val outputSettingsList: ArrayList<IntArray> =
-                mModelOperator!!.outputShapeList
+            val outputSettingsList: java.util.ArrayList<IntArray> =
+                modelOperator!!.outputShapeList()
             for (i in outputSettingsList.indices) {
                 settingsFactory.setOutputFormat(
                     i,
-                    mModelOperator!!.outputType,
+                    modelOperator!!.outputType(),
                     outputSettingsList[i]
                 )
             }
             inOutSettings = settingsFactory.create()
         } catch (e: MLException) {
             Log.e(
-                TAG,
+                "executorImpl",
                 "set input output format failed! " + e.message
             )
         }
-        Log.d(TAG, "interpret start")
-        execModel(inputs, inOutSettings,position)
+        Log.d("executorImpl", "interpret start")
+        performModel(inputs, inOutSettings, position)
     }
 
-    private fun execModel(
+    private fun performModel(
         inputs: MLModelInputs?,
         outputSettings: MLModelInputOutputSettings?,
         position: Int
     ) {
-        modelExecutor!!.exec(inputs, outputSettings)
+        mlModelExecutor!!.exec(inputs, outputSettings)
             .addOnSuccessListener { mlModelOutputs ->
-                val result: String = mModelOperator!!.resultPostProcess(mlModelOutputs)
-                hashmapData?.set(position, result)
-                hashmapData?.let { callbackResult.invoke(it) }
-                Log.i(TAG, "result: $result")
+                val result: String = modelOperator!!.resultPostProcess(mlModelOutputs).toString()
+                hashMapData?.set(position, result)
+                hashMapData?.let { callbackResult.invoke(it) }
+                Log.i("executorImpl", "result: $result")
             }.addOnFailureListener { e ->
                 e.printStackTrace()
-                Log.e(TAG, "interpret failed, because " + e.message)
+                Log.e("executorImpl", "interpret failed, because " + e.message)
             }.addOnCompleteListener {
                 try {
-                    modelExecutor!!.close()
+                    mlModelExecutor!!.close()
                 } catch (error: IOException) {
                     error.printStackTrace()
                 }
             }
-    }
-
-    companion object {
-        private const val TAG = "MainActivity"
-    }
-
-    private fun initEnvironment() {
-        mModelOperator = ModelOperator.create(weakContext.get(), modelType)
-        mModelName = mModelOperator!!.getModelName()
-        mModelFullName = mModelOperator!!.getModelFullName()
-    }
-
-    init {
-        this.modelType = modelType
-        weakContext = WeakReference(context)
-        initEnvironment()
     }
 }

@@ -41,7 +41,7 @@ class ProductAdapter(private val context:Activity, private val productList: Arra
                 if (holder.itemView.product_category.text == "" || holder.itemView.product_category.text == "null") {
                     val bitmapDrawable: BitmapDrawable =
                         holder.itemView.product_image.drawable as BitmapDrawable
-                    interpreterManager?.asset(bitmapDrawable.bitmap, position) {
+                    interpreterManager?.createCustomModelFromAssetFile(bitmapDrawable.bitmap, position) {
                         productList[position].category = it[position].toString()
                         notifyDataSetChanged()
                     }

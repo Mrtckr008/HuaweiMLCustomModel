@@ -15,15 +15,12 @@ import java.util.*
 class ImageLableModel(private val mContext: Context) : ModelOperator() {
     private val outputSize = 0
     private val labelList: List<String>
-    override fun getInputType(): Int {
+
+    override fun outputType(): Int {
         return MLModelDataType.FLOAT32
     }
 
-    override fun getOutputType(): Int {
-        return MLModelDataType.FLOAT32
-    }
-
-    override fun getInput(inputBitmap: Bitmap): Any {
+    override fun getInput(inputBitmap: Bitmap?): Any? {
         val input =
             Array(1) {
                 Array(BITMAP_SIZE) {
@@ -34,9 +31,9 @@ class ImageLableModel(private val mContext: Context) : ModelOperator() {
             }
         for (h in 0 until BITMAP_SIZE) {
             for (w in 0 until BITMAP_SIZE) {
-                val pixel = inputBitmap.getPixel(w, h)
+                val pixel = inputBitmap?.getPixel(w, h)
                 input[batchNum][h][w][0] =
-                    (Color.red(pixel) - IMAGE_MEAN[0]) / IMAGE_STD[0]
+                    (Color.red(pixel!!) - IMAGE_MEAN[0]) / IMAGE_STD[0]
                 input[batchNum][h][w][1] =
                     (Color.green(pixel) - IMAGE_MEAN[1]) / IMAGE_STD[1]
                 input[batchNum][h][w][2] =
@@ -46,7 +43,7 @@ class ImageLableModel(private val mContext: Context) : ModelOperator() {
         return input
     }
 
-    override fun getInputShape(): IntArray {
+    override fun inputShape(): IntArray? {
         return intArrayOf(
             1,
             BITMAP_SIZE,
@@ -55,7 +52,7 @@ class ImageLableModel(private val mContext: Context) : ModelOperator() {
         )
     }
 
-    override fun getOutputShapeList(): ArrayList<IntArray> {
+    override fun outputShapeList(): ArrayList<IntArray> {
         val outputShapeList =
             ArrayList<IntArray>()
         val outputShape = intArrayOf(1, labelList.size)
@@ -63,10 +60,10 @@ class ImageLableModel(private val mContext: Context) : ModelOperator() {
         return outputShapeList
     }
 
-    override fun resultPostProcess(output: MLModelOutputs): String {
+    override fun resultPostProcess(output: MLModelOutputs?): String? {
         val result =
-            output.getOutput<Array<FloatArray>>(0)
-        val probabilities = result[0]
+            output?.getOutput<Array<FloatArray>>(0)
+        val probabilities = result?.get(0)
         return getExecutorResult(labelList, probabilities)
     }
 
@@ -84,4 +81,10 @@ class ImageLableModel(private val mContext: Context) : ModelOperator() {
         modelLabelFile = "labels.txt"
         labelList = readLabels(mContext, modelLabelFile)
     }
+
+    override fun inputType(): Int {
+        return MLModelDataType.FLOAT32
+    }
+
+
 }
